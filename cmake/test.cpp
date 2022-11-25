@@ -17,7 +17,7 @@ using namespace std;
 
 int main() {
     const wchar_t* model_path = L"D:/ai/code/test/onnx/resnet18.onnx";
-    // const wchar_t* model_path = L"D:/ai/code/abnormal/anomalib/results/fastflow/mvtec/bottle/run/optimization/model.onnx";
+    // const wchar_t* model_path = L"D:/ai/code/abnormal/anomalib/results/fastflow/mvtec/bottle/256/optimization/model.onnx";
     // const wchar_t* model_path = L"D:/ai/code/abnormal/anomalib/results/patchcore/mvtec/bottle/run/optimization/model.onnx";
     string image_path = "D:/ai/bus.jpg";
 

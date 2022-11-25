@@ -22,5 +22,5 @@ include_directories(D:/ai/onnxruntime/include)
 link_directories(D:/ai/onnxruntime/lib)
 link_libraries(onnxruntime.lib onnxruntime_providers_cuda.lib onnxruntime_providers_shared.lib onnxruntime_providers_tensorrt.lib)
 
-add_executable(main main.cpp utils.cpp opencv_utils.cpp)
+add_executable(main main.cpp utils.cpp opencv_utils.cpp inference.hpp)
 add_executable(test test.cpp)

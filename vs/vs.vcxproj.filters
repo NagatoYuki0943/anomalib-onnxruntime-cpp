@@ -21,6 +21,9 @@
     <ClInclude Include="opencv_utils.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="inference.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="utils.cpp">
