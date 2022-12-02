@@ -18,12 +18,10 @@
 
 ```yaml
 #opencv
-D:\ai\openvino\openvino_2022.1.0.643\extras\opencv\bin
+D:\ai\opencv\build\x64\vc15\bin
 
 #onnxruntime
-D:\ai\openvino\openvino_2022.1.0.643\runtime\bin\intel64\Debug
-D:\ai\openvino\openvino_2022.1.0.643\runtime\bin\intel64\Release
-D:\ai\openvino\openvino_2022.1.0.643\runtime\3rdparty\tbb\bin
+D:\ai\onnxruntime\lib
 ```
 
 
