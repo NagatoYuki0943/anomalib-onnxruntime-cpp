@@ -196,7 +196,6 @@ public:
         }
 
         // 4.将热力图转换为Mat
-        // result1.data<float>() 返回指针 放入Mat中不能解引用
         cv::Mat anomaly_map = cv::Mat(cv::Size(this->meta.infer_size[1], this->meta.infer_size[0]),
                                       CV_32FC1, output_tensors[0].GetTensorMutableData<float>());
 
