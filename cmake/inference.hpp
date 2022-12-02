@@ -123,7 +123,7 @@ public:
 
         for (int i = 0; i < this->output_nums; i++) {
             // 输出变量名
-            Ort::AllocatedStringPtr output_name = this->session.GetOutputNameAllocated(i, allocator);
+            Ort::AllocatedStringPtr output_name = this->session.GetOutputNameAllocated(i, this->allocator);
             this->output_node_names.push_back(output_name.get());
             this->output_node_names_ptr.push_back(move(output_name));
 
@@ -196,8 +196,9 @@ public:
         }
 
         // 4.将热力图转换为Mat
+        auto* output0 = output_tensors[0].GetTensorMutableData<float>();
         cv::Mat anomaly_map = cv::Mat(cv::Size(this->meta.infer_size[1], this->meta.infer_size[0]),
-                                      CV_32FC1, output_tensors[0].GetTensorMutableData<float>());
+                                      CV_32FC1, output0);
 
         // 5.针对不同输出数量获取得分
         cv::Mat pred_score;

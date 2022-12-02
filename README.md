@@ -2,7 +2,11 @@
 
 > 适用于anomalib导出的onnx格式的模型
 
+# onnxruntime官方例子
 
+> https://github.com/microsoft/onnxruntime-inference-examples/tree/main/c_cxx
+>
+> 推荐 `squeezenet/main.cpp`
 
 # 下载onnxruntime和opencv
 
