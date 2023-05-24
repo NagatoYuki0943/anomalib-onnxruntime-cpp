@@ -95,11 +95,12 @@ void multi(const wchar_t* model_path, string& meta_path, string& image_dir, stri
 
 
 int main() {
-    const wchar_t* model_path = L"D:/ai/code/abnormal/anomalib/results/fastflow/mvtec/bottle/256/optimization/model.onnx";
-    string param_path         = "D:/ai/code/abnormal/anomalib/results/fastflow/mvtec/bottle/256/optimization/meta_data.json";
-    string image_path = "D:/ai/code/abnormal/anomalib/datasets/MVTec/bottle/test/broken_large/000.png";
-    string image_dir = "D:/ai/code/abnormal/anomalib/datasets/MVTec/bottle/test/broken_large";
-    string save_dir = "D:/ai/code/abnormal/anomalib-onnxruntime-cpp/cmake/result"; // 注意目录不会自动创建,要手动创建才会保存
+    // 注意使用非patchcore模型时报错可以查看utils.cpp中infer_height和infer_width中的[1] 都改为 [0]，具体查看注释和metadata.json文件
+    const wchar_t* model_path = L"D:/code/anomalib/results/patchcore/mvtec/bottle/run/weights/openvino/model.onnx";
+    string param_path         = "D:/code/anomalib/results/patchcore/mvtec/bottle/run/weights/openvino/metadata.json";
+    string image_path = "D:/code/anomalib/datasets/MVTec/bottle/test/broken_large/000.png";
+    string image_dir = "D:/code/anomalib/datasets/MVTec/bottle/test/broken_large";
+    string save_dir = "D:/code/anomalib-onnxruntime-cpp/result"; // 注意目录不会自动创建,要手动创建才会保存
     string device = "cuda";
     single(model_path, param_path, image_path, save_dir, device);
     // multi(model_path, param_path, image_dir, save_dir, device);
