@@ -17,8 +17,6 @@ using namespace std;
 
 int main() {
     const wchar_t* model_path = L"D:/ai/code/test/onnx/resnet18.onnx";
-    // const wchar_t* model_path = L"D:/ai/code/abnormal/anomalib/results/fastflow/mvtec/bottle/256/optimization/model.onnx";
-    // const wchar_t* model_path = L"D:/ai/code/abnormal/anomalib/results/patchcore/mvtec/bottle/run/optimization/model.onnx";
     string image_path = "D:/ai/bus.jpg";
 
     cv::Mat image = cv::imread(image_path);
@@ -70,14 +68,7 @@ int main() {
     }
 
     // create session
-    Ort::Session session(nullptr);
-    try {
-        session = Ort::Session{ env, model_path, sessionOptions };
-    }
-    catch (Ort::Exception& e) {
-        cout << e.what() << endl;
-        return 1;
-    }
+    Ort::Session session = Ort::Session(env, model_path, sessionOptions );
 
     /**
      * model info
@@ -85,8 +76,8 @@ int main() {
      // 1. 获得模型有多少个输入和输出，一般是指对应网络层的数目, 如果是多输出网络，就会是对应输出的数目
     size_t input_nums = session.GetInputCount();
     size_t output_nums = session.GetOutputCount();
-    printf("Number of inputs = %zu\n", input_nums); // Number of inputs = 1
-    printf("Number of output = %zu\n", output_nums);// Number of output = 1
+    printf_s("Number of inputs = %zu\n", input_nums); // Number of inputs = 1
+    printf_s("Number of output = %zu\n", output_nums);// Number of output = 1
 
     // 2.获取输入输出name
     // 3.获取维度数量

@@ -35,11 +35,11 @@ public:
      * @param threads       SetIntraOpNumThreads 线程数, defaults to 0
      * @param gpu_mem_limit 显存限制, only for cuda or tensorrt device, defaults to 2 GB
      */
-    Inference(const wchar_t* model_path, string& meta_path, string& device, int threads = 0, int gpu_mem_limit = 2) {
+    Inference(string& model_path, string& meta_path, string& device, int threads = 0, int gpu_mem_limit = 2) {
         // 1.读取meta
         this->meta = getJson(meta_path);
         // 2.创建模型
-        this->session = get_model(model_path, device, threads, gpu_mem_limit);
+        this->session = this->get_model(model_path, device, threads, gpu_mem_limit);
         // 3.获取模型的输入输出
         this->get_onnx_info();
         // 4.模型预热
@@ -53,7 +53,7 @@ public:
      * @param threads       SetIntraOpNumThreads 线程数, defaults to 0
      * @param gpu_mem_limit 显存限制, only for cuda or tensorrt device, defaults to 2 GB
      */
-    Ort::Session get_model(const wchar_t* model_path, string& device, int threads = 0, int gpu_mem_limit = 2) {
+    Ort::Session get_model(string& model_path, string& device, int threads = 0, int gpu_mem_limit = 2) {
         // 获取可用的provider
         auto availableProviders = Ort::GetAvailableProviders();
         for (const auto& provider : availableProviders) {
@@ -90,15 +90,11 @@ public:
                 sessionOptions.AppendExecutionProvider_TensorRT(trt_options);
             }
         }
+        wchar_t* model_path1 = new wchar_t[model_path.size()];
+        swprintf(model_path1, 2048, L"%S", model_path.c_str());
         // create session
-        Ort::Session temp_session(nullptr);
-        try {
-            temp_session = Ort::Session{ this->env, model_path, sessionOptions };
-        }
-        catch (Ort::Exception& e) {
-            cout << e.what() << endl;
-        }
-        return temp_session;
+        Ort::Session session = Ort::Session(this->env, model_path1, sessionOptions);
+        return session;
     }
 
     void get_onnx_info() {
