@@ -2,6 +2,14 @@
 
 > 适用于anomalib导出的onnx格式的模型
 
+```yaml
+# 模型配置文件中设置为onnx,导出openvino会导出onnx
+optimization:
+  export_mode: onnx # options: torch, onnx, openvino
+```
+
+
+
 # onnxruntime官方例子
 
 > https://github.com/microsoft/onnxruntime-inference-examples/tree/main/c_cxx
