@@ -13,48 +13,48 @@ using namespace std;
 
 class Inference {
 private:
-    MetaData meta{};                                        // ³¬²ÎÊı
-    Ort::Env env{};                                         // Èı¸öort²ÎÊı
+    MetaData meta{};                                        // è¶…å‚æ•°
+    Ort::Env env{};                                         // ä¸‰ä¸ªortå‚æ•°
     Ort::AllocatorWithDefaultOptions allocator{};
     Ort::RunOptions runOptions{};
     Ort::Session session = Ort::Session(nullptr);           // onnxruntime session
-    size_t input_nums{};                                    // Ä£ĞÍÊäÈëÖµÊıÁ¿
-    size_t output_nums{};                                   // Ä£ĞÍÊä³öÖµÊıÁ¿
-    vector<const char*> input_node_names;                   // ÊäÈë½ÚµãÃû
-    vector<Ort::AllocatedStringPtr> input_node_names_ptr;   // ÊäÈë½ÚµãÃûÖ¸Õë,±£´æËü·ÀÖ¹ÊÍ·Å https://github.com/microsoft/onnxruntime/issues/13651
-    vector<vector<int64_t>> input_dims;                     // ÊäÈëĞÎ×´
-    vector<const char*> output_node_names;                  // Êä³ö½ÚµãÃû
-    vector<Ort::AllocatedStringPtr> output_node_names_ptr;  // ÊäÈë½ÚµãÃûÖ¸Õë
-    vector<vector<int64_t>> output_dims;                    // Êä³öĞÎ×´
+    size_t input_nums{};                                    // æ¨¡å‹è¾“å…¥å€¼æ•°é‡
+    size_t output_nums{};                                   // æ¨¡å‹è¾“å‡ºå€¼æ•°é‡
+    vector<const char*> input_node_names;                   // è¾“å…¥èŠ‚ç‚¹å
+    vector<Ort::AllocatedStringPtr> input_node_names_ptr;   // è¾“å…¥èŠ‚ç‚¹åæŒ‡é’ˆ,ä¿å­˜å®ƒé˜²æ­¢é‡Šæ”¾ https://github.com/microsoft/onnxruntime/issues/13651
+    vector<vector<int64_t>> input_dims;                     // è¾“å…¥å½¢çŠ¶
+    vector<const char*> output_node_names;                  // è¾“å‡ºèŠ‚ç‚¹å
+    vector<Ort::AllocatedStringPtr> output_node_names_ptr;  // è¾“å…¥èŠ‚ç‚¹åæŒ‡é’ˆ
+    vector<vector<int64_t>> output_dims;                    // è¾“å‡ºå½¢çŠ¶
 
 public:
     /**
-     * @param model_path    Ä£ĞÍÂ·¾¶
-     * @param meta_path     ³¬²ÎÊıÂ·¾¶
-     * @param device        cpu or cuda or tensorrt ÍÆÀí
-     * @param threads       SetIntraOpNumThreads Ïß³ÌÊı, defaults to 0
-     * @param gpu_mem_limit ÏÔ´æÏŞÖÆ, only for cuda or tensorrt device, defaults to 2 GB
+     * @param model_path    æ¨¡å‹è·¯å¾„
+     * @param meta_path     è¶…å‚æ•°è·¯å¾„
+     * @param device        cpu or cuda or tensorrt æ¨ç†
+     * @param threads       SetIntraOpNumThreads çº¿ç¨‹æ•°, defaults to 0
+     * @param gpu_mem_limit æ˜¾å­˜é™åˆ¶, only for cuda or tensorrt device, defaults to 2 GB
      */
     Inference(string& model_path, string& meta_path, string& device, int threads = 0, int gpu_mem_limit = 2) {
-        // 1.¶ÁÈ¡meta
+        // 1.è¯»å–meta
         this->meta = getJson(meta_path);
-        // 2.´´½¨Ä£ĞÍ
+        // 2.åˆ›å»ºæ¨¡å‹
         this->session = this->get_model(model_path, device, threads, gpu_mem_limit);
-        // 3.»ñÈ¡Ä£ĞÍµÄÊäÈëÊä³ö
+        // 3.è·å–æ¨¡å‹çš„è¾“å…¥è¾“å‡º
         this->get_onnx_info();
-        // 4.Ä£ĞÍÔ¤ÈÈ
+        // 4.æ¨¡å‹é¢„çƒ­
         this->warm_up();
     }
 
     /**
      * get onnx model
-     * @param model_path    Ä£ĞÍÂ·¾¶
-     * @param device        Ê¹ÓÃµÄÉè±¸
-     * @param threads       SetIntraOpNumThreads Ïß³ÌÊı, defaults to 0
-     * @param gpu_mem_limit ÏÔ´æÏŞÖÆ, only for cuda or tensorrt device, defaults to 2 GB
+     * @param model_path    æ¨¡å‹è·¯å¾„
+     * @param device        ä½¿ç”¨çš„è®¾å¤‡
+     * @param threads       SetIntraOpNumThreads çº¿ç¨‹æ•°, defaults to 0
+     * @param gpu_mem_limit æ˜¾å­˜é™åˆ¶, only for cuda or tensorrt device, defaults to 2 GB
      */
     Ort::Session get_model(string& model_path, string& device, int threads = 0, int gpu_mem_limit = 2) {
-        // »ñÈ¡¿ÉÓÃµÄprovider
+        // è·å–å¯ç”¨çš„provider
         auto availableProviders = Ort::GetAvailableProviders();
         for (const auto& provider : availableProviders) {
             cout << provider << " ";
@@ -65,9 +65,9 @@ public:
         // CPUExecutionProvider
 
         Ort::SessionOptions sessionOptions;
-        // Ê¹ÓÃ0¸öÏß³ÌÖ´ĞĞop,ÈôÏëÌáÉıËÙ¶È£¬Ôö¼ÓÏß³ÌÊı
+        // ä½¿ç”¨0ä¸ªçº¿ç¨‹æ‰§è¡Œop,è‹¥æƒ³æå‡é€Ÿåº¦ï¼Œå¢åŠ çº¿ç¨‹æ•°
         sessionOptions.SetIntraOpNumThreads(threads);
-        // ORT_ENABLE_ALL: ÆôÓÃËùÓĞ¿ÉÄÜµÄÓÅ»¯
+        // ORT_ENABLE_ALL: å¯ç”¨æ‰€æœ‰å¯èƒ½çš„ä¼˜åŒ–
         sessionOptions.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
 
         if (device == "cuda" || device == "tensorrt") {
@@ -98,32 +98,32 @@ public:
     }
 
     void get_onnx_info() {
-        // 1. »ñµÃÄ£ĞÍÓĞ¶àÉÙ¸öÊäÈëºÍÊä³ö£¬Ò»°ãÊÇÖ¸¶ÔÓ¦ÍøÂç²ãµÄÊıÄ¿, Èç¹ûÊÇ¶àÊä³öÍøÂç£¬¾Í»áÊÇ¶ÔÓ¦Êä³öµÄÊıÄ¿
+        // 1. è·å¾—æ¨¡å‹æœ‰å¤šå°‘ä¸ªè¾“å…¥å’Œè¾“å‡ºï¼Œä¸€èˆ¬æ˜¯æŒ‡å¯¹åº”ç½‘ç»œå±‚çš„æ•°ç›®, å¦‚æœæ˜¯å¤šè¾“å‡ºç½‘ç»œï¼Œå°±ä¼šæ˜¯å¯¹åº”è¾“å‡ºçš„æ•°ç›®
         this->input_nums = session.GetInputCount();
         this->output_nums = session.GetOutputCount();
         printf("Number of inputs = %zu\n", this->input_nums); // Number of inputs = 1
         printf("Number of output = %zu\n", this->output_nums);// Number of output = 1
 
-        // 2.»ñÈ¡ÊäÈëÊä³öname
-        // 3.»ñÈ¡Î¬¶ÈÊıÁ¿
+        // 2.è·å–è¾“å…¥è¾“å‡ºname
+        // 3.è·å–ç»´åº¦æ•°é‡
         for (int i = 0; i < this->input_nums; i++) {
-            // ÊäÈë±äÁ¿Ãû
+            // è¾“å…¥å˜é‡å
             Ort::AllocatedStringPtr input_name = this->session.GetInputNameAllocated(i, this->allocator);
             this->input_node_names.push_back(input_name.get());
             this->input_node_names_ptr.push_back(move(input_name));
 
-            // ÊäÈëĞÎ×´
+            // è¾“å…¥å½¢çŠ¶
             auto input_shape_info = this->session.GetInputTypeInfo(i).GetTensorTypeAndShapeInfo();
             this->input_dims.push_back(input_shape_info.GetShape());
         }
 
         for (int i = 0; i < this->output_nums; i++) {
-            // Êä³ö±äÁ¿Ãû
+            // è¾“å‡ºå˜é‡å
             Ort::AllocatedStringPtr output_name = this->session.GetOutputNameAllocated(i, this->allocator);
             this->output_node_names.push_back(output_name.get());
             this->output_node_names_ptr.push_back(move(output_name));
 
-            // Êä³öĞÎ×´
+            // è¾“å‡ºå½¢çŠ¶
             auto output_shape_info = this->session.GetOutputTypeInfo(i).GetTensorTypeAndShapeInfo();
             this->output_dims.push_back(output_shape_info.GetShape());
         }
@@ -146,10 +146,10 @@ public:
     }
 
     /**
-     * Ä£ĞÍÔ¤ÈÈ
+     * æ¨¡å‹é¢„çƒ­
      */
     void warm_up() {
-        // ÊäÈëÊı¾İ
+        // è¾“å…¥æ•°æ®
         cv::Size size = cv::Size(this->meta.infer_size[1], this->meta.infer_size[0]);
         cv::Scalar color = cv::Scalar(0, 0, 0);
         cv::Mat input = cv::Mat(size, CV_8UC3, color);
@@ -157,32 +157,32 @@ public:
     }
 
     /**
-     * ÍÆÀíµ¥ÕÅÍ¼Æ¬
-     * @param image Ô­Ê¼Í¼Æ¬
-     * @return      ±ê×¼»¯µÄ²¢Ëù·Åµ½Ô­Í¼ÈÈÁ¦Í¼ºÍµÃ·Ö
+     * æ¨ç†å•å¼ å›¾ç‰‡
+     * @param image åŸå§‹å›¾ç‰‡
+     * @return      æ ‡å‡†åŒ–çš„å¹¶æ‰€æ”¾åˆ°åŸå›¾çƒ­åŠ›å›¾å’Œå¾—åˆ†
      */
     Result infer(cv::Mat& image) {
-        // 1.±£´æÍ¼Æ¬Ô­Ê¼¸ß¿í
+        // 1.ä¿å­˜å›¾ç‰‡åŸå§‹é«˜å®½
         this->meta.image_size[0] = image.size[0];
         this->meta.image_size[1] = image.size[1];
 
-        // 2.Í¼Æ¬Ô¤´¦Àí
+        // 2.å›¾ç‰‡é¢„å¤„ç†
         cv::Mat resized_image;
         resized_image = pre_process(image, meta);
         // [H, W, C] -> [N, C, H, W]
-        // ÕâÀïÖ»×ª»»Î¬¶È,ÆäËûÔ¤´¦Àí¶¼×öÁË,python°æ±¾ÊÇ·ñÊ¹ÓÃopenvinoÍ¼Æ¬Ô¤´¦Àí¶¼ĞèÒªÕâÒ»²½,C++Ö»ÊÇ×Ô¼ºµÄÔ¤´¦ÀíĞèÒªÕâÒ»²½
-        // openvinoÈç¹ûÊ¹ÓÃÕâÒ»²½µÄ»°ĞèÒª½«ÊäÈëµÄÀàĞÍÓÉ u8 ×ª»»Îª f32, Layout ÓÉ NHWC ¸ÄÎª NCHW  (38, 39ĞĞ)
+        // è¿™é‡Œåªè½¬æ¢ç»´åº¦,å…¶ä»–é¢„å¤„ç†éƒ½åšäº†,pythonç‰ˆæœ¬æ˜¯å¦ä½¿ç”¨openvinoå›¾ç‰‡é¢„å¤„ç†éƒ½éœ€è¦è¿™ä¸€æ­¥,C++åªæ˜¯è‡ªå·±çš„é¢„å¤„ç†éœ€è¦è¿™ä¸€æ­¥
+        // openvinoå¦‚æœä½¿ç”¨è¿™ä¸€æ­¥çš„è¯éœ€è¦å°†è¾“å…¥çš„ç±»å‹ç”± u8 è½¬æ¢ä¸º f32, Layout ç”± NHWC æ”¹ä¸º NCHW  (38, 39è¡Œ)
         resized_image = cv::dnn::blobFromImage(resized_image, 1.0,
                                                { this->meta.infer_size[1], this->meta.infer_size[0] },
                                                { 0, 0, 0 },
                                                false, false, CV_32F);
 
-        // 3.´ÓÍ¼Ïñ´´½¨tensor
-        // 3.1 ÉêÇëÄÚ´æ¿Õ¼ä
+        // 3.ä»å›¾åƒåˆ›å»ºtensor
+        // 3.1 ç”³è¯·å†…å­˜ç©ºé—´
         auto memory_info = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);
-        // 3.2 ´´½¨ÊäÈëÖµ
+        // 3.2 åˆ›å»ºè¾“å…¥å€¼
         Ort::Value input_tensor = Ort::Value::CreateTensor<float>(memory_info, resized_image.ptr<float>(), resized_image.total(), input_dims[0].data(), input_dims[0].size());
-        // 3.3 ÍÆÀí Ö»´«µİÊäÈë
+        // 3.3 æ¨ç† åªä¼ é€’è¾“å…¥
         vector<Ort::Value> output_tensors;
         try {
             output_tensors = session.Run(this->runOptions, input_node_names.data(), &input_tensor, input_nums, output_node_names.data(), output_nums);
@@ -191,55 +191,55 @@ public:
             cout << e.what() << endl;
         }
 
-        // 4.½«ÈÈÁ¦Í¼×ª»»ÎªMat
+        // 4.å°†çƒ­åŠ›å›¾è½¬æ¢ä¸ºMat
         auto* output0 = output_tensors[0].GetTensorMutableData<float>();
         cv::Mat anomaly_map = cv::Mat(cv::Size(this->meta.infer_size[1], this->meta.infer_size[0]),
                                       CV_32FC1, output0);
 
-        // 5.Õë¶Ô²»Í¬Êä³öÊıÁ¿»ñÈ¡µÃ·Ö
+        // 5.é’ˆå¯¹ä¸åŒè¾“å‡ºæ•°é‡è·å–å¾—åˆ†
         cv::Mat pred_score;
         if (this->output_nums == 2) {
             pred_score = cv::Mat(cv::Size(1, 1), CV_32FC1, output_tensors[1].GetTensorMutableData<float>());  // {1}
         }
         else {
-            double _, maxValue;    // ×î´óÖµ£¬×îĞ¡Öµ
+            double _, maxValue;    // æœ€å¤§å€¼ï¼Œæœ€å°å€¼
             cv::minMaxLoc(anomaly_map, &_, &maxValue);
             pred_score = cv::Mat(cv::Size(1, 1), CV_32FC1, maxValue);
         }
         cout << "pred_score: " << pred_score << endl;   // 4.0252275
 
-        // 6.ºó´¦Àí:±ê×¼»¯,Ëõ·Åµ½Ô­Í¼
+        // 6.åå¤„ç†:æ ‡å‡†åŒ–,ç¼©æ”¾åˆ°åŸå›¾
         vector<cv::Mat> result = post_process(anomaly_map, pred_score, meta);
         anomaly_map = result[0];
         float score = result[1].at<float>(0, 0);
 
-        // 7.·µ»Ø½á¹û
+        // 7.è¿”å›ç»“æœ
         return Result{ anomaly_map, score };
     }
 
     /**
-     * ÍÆÀíµ¥ÕÅÍ¼Æ¬
-     * @param image Ô­Ê¼Í¼Æ¬
-     * @return      ±ê×¼»¯µÄ²¢Ëù·Åµ½Ô­Í¼ÈÈÁ¦Í¼ºÍµÃ·Ö
+     * æ¨ç†å•å¼ å›¾ç‰‡
+     * @param image åŸå§‹å›¾ç‰‡
+     * @return      æ ‡å‡†åŒ–çš„å¹¶æ‰€æ”¾åˆ°åŸå›¾çƒ­åŠ›å›¾å’Œå¾—åˆ†
      */
     cv::Mat single(string& image_path, string& save_dir) {
-        // 1.¶ÁÈ¡Í¼Æ¬
+        // 1.è¯»å–å›¾ç‰‡
         cv::Mat image = readImage(image_path);
 
         // time
         auto start = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-        // 2.ÍÆÀíµ¥ÕÅÍ¼Æ¬
+        // 2.æ¨ç†å•å¼ å›¾ç‰‡
         Result result = this->infer(image);
         cout << "score: " << result.score << endl;
 
-        // 3.Éú³ÉÆäËûÍ¼Æ¬(mask,mask±ßÔµ,ÈÈÁ¦Í¼ºÍÔ­Í¼µÄµş¼Ó)
+        // 3.ç”Ÿæˆå…¶ä»–å›¾ç‰‡(mask,maskè¾¹ç¼˜,çƒ­åŠ›å›¾å’ŒåŸå›¾çš„å åŠ )
         vector<cv::Mat> images = gen_images(image, result.anomaly_map, result.score);
         // time
         auto end = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
         cout << "infer time: " << end - start << " ms" << endl;
 
-        // 4.±£´æÏÔÊ¾Í¼Æ¬
-        // ½«mask×ª»¯Îª3Í¨µÀ,²»È»Ã»·¨Æ´½ÓÍ¼Æ¬
+        // 4.ä¿å­˜æ˜¾ç¤ºå›¾ç‰‡
+        // å°†maskè½¬åŒ–ä¸º3é€šé“,ä¸ç„¶æ²¡æ³•æ‹¼æ¥å›¾ç‰‡
         cv::applyColorMap(images[0], images[0], cv::ColormapTypes::COLORMAP_JET);
         saveScoreAndImages(result.score, images, image_path, save_dir);
 
@@ -247,41 +247,41 @@ public:
     }
 
     /**
-     * ¶àÕÅÍ¼Æ¬ÍÆÀí
-     * @param image_dir Í¼Æ¬ÎÄ¼ş¼ĞÂ·¾¶
-     * @param save_dir  ±£´æÂ·¾¶
+     * å¤šå¼ å›¾ç‰‡æ¨ç†
+     * @param image_dir å›¾ç‰‡æ–‡ä»¶å¤¹è·¯å¾„
+     * @param save_dir  ä¿å­˜è·¯å¾„
      */
     void multi(string& image_dir, string& save_dir) {
-        // 1.¶ÁÈ¡È«²¿Í¼Æ¬Â·¾¶
+        // 1.è¯»å–å…¨éƒ¨å›¾ç‰‡è·¯å¾„
         vector<cv::String> paths = getImagePaths(image_dir);
 
         vector<float> times;
         for (auto& image_path : paths) {
-            // 2.¶ÁÈ¡µ¥ÕÅÍ¼Æ¬
+            // 2.è¯»å–å•å¼ å›¾ç‰‡
             cv::Mat image = readImage(image_path);
 
             // time
             auto start = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-            // 3.ÍÆÀíµ¥ÕÅÍ¼Æ¬
+            // 3.æ¨ç†å•å¼ å›¾ç‰‡
             Result result = this->infer(image);
             cout << "score: " << result.score << endl;
 
-            // 4.Í¼Æ¬Éú³ÉÆäËûÍ¼Æ¬(mask,mask±ßÔµ,ÈÈÁ¦Í¼ºÍÔ­Í¼µÄµş¼Ó)
+            // 4.å›¾ç‰‡ç”Ÿæˆå…¶ä»–å›¾ç‰‡(mask,maskè¾¹ç¼˜,çƒ­åŠ›å›¾å’ŒåŸå›¾çš„å åŠ )
             vector<cv::Mat> images = gen_images(image, result.anomaly_map, result.score);
             // time
             auto end = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
             cout << "infer time: " << end - start << " ms" << endl;
             times.push_back(end - start);
 
-            // 5.±£´æÍ¼Æ¬
-            // ½«mask×ª»¯Îª3Í¨µÀ,²»È»Ã»·¨Æ´½ÓÍ¼Æ¬
+            // 5.ä¿å­˜å›¾ç‰‡
+            // å°†maskè½¬åŒ–ä¸º3é€šé“,ä¸ç„¶æ²¡æ³•æ‹¼æ¥å›¾ç‰‡
             cv::applyColorMap(images[0], images[0], cv::ColormapTypes::COLORMAP_JET);
             saveScoreAndImages(result.score, images, image_path, save_dir);
         }
 
-        // 6.Í³¼ÆÊı¾İ
-        double sumValue = accumulate(begin(times), end(times), 0.0); // accumulateº¯Êı¾ÍÊÇÇóvectorºÍµÄº¯Êı£»
-        double avgValue = sumValue / times.size();                   // Çó¾ùÖµ
+        // 6.ç»Ÿè®¡æ•°æ®
+        double sumValue = accumulate(begin(times), end(times), 0.0); // accumulateå‡½æ•°å°±æ˜¯æ±‚vectorå’Œçš„å‡½æ•°ï¼›
+        double avgValue = sumValue / times.size();                   // æ±‚å‡å€¼
         cout << "avg infer time: " << avgValue << " ms" << endl;
     }
 };
