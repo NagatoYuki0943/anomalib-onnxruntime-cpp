@@ -99,8 +99,8 @@ public:
 
     void get_onnx_info() {
         // 1. 获得模型有多少个输入和输出，一般是指对应网络层的数目, 如果是多输出网络，就会是对应输出的数目
-        this->input_nums = session.GetInputCount();
-        this->output_nums = session.GetOutputCount();
+        this->input_nums = this->session.GetInputCount();
+        this->output_nums = this->session.GetOutputCount();
         printf("Number of inputs = %zu\n", this->input_nums); // Number of inputs = 1
         printf("Number of output = %zu\n", this->output_nums);// Number of output = 1
 
