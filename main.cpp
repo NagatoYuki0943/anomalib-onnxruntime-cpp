@@ -3,25 +3,25 @@
 
 
 int main() {
-    // patchcoreÄ£ÐÍÑµÁ·ÅäÖÃÎÄ¼þÉ¾³ýÁËcenter_crop
+    // patchcoreÄ£ï¿½ï¿½Ñµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½É¾ï¿½ï¿½ï¿½ï¿½center_crop
     string model_path = "D:/ml/code/anomalib/results/patchcore/mvtec/bottle/run/weights/openvino/model.onnx";
     string meta_path  = "D:/ml/code/anomalib/results/patchcore/mvtec/bottle/run/weights/openvino/metadata.json";
     string image_path = "D:/ml/code/anomalib/datasets/MVTec/bottle/test/broken_large/000.png";
     string image_dir  = "D:/ml/code/anomalib/datasets/MVTec/bottle/test/broken_large";
-    string save_dir   = "D:/ml/code/anomalib-onnxruntime-cpp/result"; // ×¢ÒâÄ¿Â¼²»»á×Ô¶¯´´½¨,ÒªÊÖ¶¯´´½¨²Å»á±£´æ
+    string save_dir   = "D:/ml/code/anomalib-onnxruntime-cpp/result"; // ×¢ï¿½ï¿½Ä¿Â¼ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½,Òªï¿½Ö¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å»á±£ï¿½ï¿½
     string device     = "cuda";
     int threads       = 0;
     int gpu_mem_limit = 4;
 
-    // ´´½¨ÍÆÀíÆ÷
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     auto inference = Inference(model_path, meta_path, device, threads, gpu_mem_limit);
 
-    // µ¥ÕÅÍ¼Æ¬ÍÆÀí
+    // ï¿½ï¿½ï¿½ï¿½Í¼Æ¬ï¿½ï¿½ï¿½ï¿½
     cv::Mat result = inference.single(image_path, save_dir);
     cv::imshow("result", result);
     cv::waitKey(0);
 
-    // ¶àÕÅÍ¼Æ¬ÍÆÀí
+    // ï¿½ï¿½ï¿½ï¿½Í¼Æ¬ï¿½ï¿½ï¿½ï¿½
     inference.multi(image_dir, save_dir);
     return 0;
 }
