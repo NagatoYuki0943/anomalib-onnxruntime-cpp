@@ -10,8 +10,8 @@ int main() {
     string image_dir  = "D:/ml/code/anomalib/datasets/MVTec/bottle/test/broken_large";
     string save_dir   = "D:/ml/code/anomalib-onnxruntime-cpp/result"; // 注意目录不会自动创建,要手动创建才会保存
     string device     = "cuda";
-    int threads       = 0;
-    int gpu_mem_limit = 4;
+    int threads       = 4;  // Ort::SessionOptions SetIntraOpNumThreads & SetInterOpNumThreads
+    int gpu_mem_limit = 4;  // onnxruntime gpu memory limit
 
     // 创建推理器
     auto inference = Inference(model_path, meta_path, device, threads, gpu_mem_limit);

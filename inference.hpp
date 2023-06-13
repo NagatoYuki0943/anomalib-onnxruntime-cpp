@@ -60,23 +60,20 @@ public:
             cout << provider << " ";
         }
         cout << endl;
-        // TensorrtExecutionProvider
-        // CUDAExecutionProvider
-        // CPUExecutionProvider
 
         Ort::SessionOptions sessionOptions;
         // 使用0个线程执行op,若想提升速度，增加线程数
         sessionOptions.SetIntraOpNumThreads(threads);
+        sessionOptions.SetInterOpNumThreads(threads);
         // ORT_ENABLE_ALL: 启用所有可能的优化
         sessionOptions.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
-
         if (device == "cuda" || device == "tensorrt") {
             // https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html
             // https://onnxruntime.ai/docs/api/c/struct_ort_c_u_d_a_provider_options.html
             OrtCUDAProviderOptions cuda_options;
             cuda_options.device_id = 0;
             cuda_options.arena_extend_strategy = 0;
-            cuda_options.gpu_mem_limit = (size_t)gpu_mem_limit * 1024 * 1024 * 1024; // 2GB
+            cuda_options.gpu_mem_limit = (size_t)gpu_mem_limit * 1024 * 1024 * 1024; // gpu memory limit
             cuda_options.cudnn_conv_algo_search = OrtCudnnConvAlgoSearch::OrtCudnnConvAlgoSearchExhaustive;
             cuda_options.do_copy_in_default_stream = 1;
             sessionOptions.AppendExecutionProvider_CUDA(cuda_options);
@@ -85,7 +82,7 @@ public:
                 // https://onnxruntime.ai/docs/api/c/struct_ort_tensor_r_t_provider_options.html
                 OrtTensorRTProviderOptions trt_options;
                 trt_options.device_id = 0;
-                trt_options.trt_max_workspace_size = (size_t)gpu_mem_limit * 1024 * 1024 * 1024; // 2GB
+                trt_options.trt_max_workspace_size = (size_t)gpu_mem_limit * 1024 * 1024 * 1024; // gpu memory limit
                 trt_options.trt_fp16_enable = 0;
                 sessionOptions.AppendExecutionProvider_TensorRT(trt_options);
             }
@@ -169,9 +166,6 @@ public:
         // 2.图片预处理
         cv::Mat resized_image;
         resized_image = pre_process(image, meta);
-        // [H, W, C] -> [N, C, H, W]
-        // 这里只转换维度,其他预处理都做了,python版本是否使用openvino图片预处理都需要这一步,C++只是自己的预处理需要这一步
-        // openvino如果使用这一步的话需要将输入的类型由 u8 转换为 f32, Layout 由 NHWC 改为 NCHW  (38, 39行)
         resized_image = cv::dnn::blobFromImage(resized_image, 1.0,
                                                { this->meta.infer_size[1], this->meta.infer_size[0] },
                                                { 0, 0, 0 },
@@ -185,7 +179,14 @@ public:
         // 3.3 推理 只传递输入
         vector<Ort::Value> output_tensors;
         try {
-            output_tensors = session.Run(this->runOptions, input_node_names.data(), &input_tensor, input_nums, output_node_names.data(), output_nums);
+            output_tensors = session.Run(
+                this->runOptions,
+                this->input_node_names.data(),
+                &input_tensor,
+                this->input_nums,
+                this->output_node_names.data(),
+                this->output_nums
+            );
         }
         catch (Ort::Exception& e) {
             cout << e.what() << endl;
