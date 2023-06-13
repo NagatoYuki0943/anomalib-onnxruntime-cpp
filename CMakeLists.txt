@@ -11,10 +11,10 @@ set(OpenCV_DIR D:/ml/opencv/build)
 find_package(OpenCV REQUIRED)
 if(OpenCV_FOUND)
     message("OpenCV_INCLUDE_DIRS: " ${OpenCV_INCLUDE_DIRS})
-    message("OpenCV_LIBRARIES: " ${OpenCV_LIBRARIES})
+    message("OpenCV_LIBS: " ${OpenCV_LIBS})
 endif()
 include_directories(${OpenCV_INCLUDE_DIRS})
-link_libraries(${OpenCV_LIBRARIES})
+link_libraries(${OpenCV_LIBS})
 
 # onnxruntime include
 include_directories(D:/ml/onnxruntime/include)
