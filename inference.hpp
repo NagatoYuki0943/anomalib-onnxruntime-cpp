@@ -39,7 +39,7 @@ public:
         // 1.读取meta
         this->meta = getJson(meta_path);
         // 2.创建模型
-        this->session = this->get_model(model_path, device, threads, gpu_mem_limit);
+        this->get_model(model_path, device, threads, gpu_mem_limit);
         // 3.获取模型的输入输出
         this->get_onnx_info();
         // 4.模型预热
@@ -53,7 +53,7 @@ public:
      * @param threads       SetIntraOpNumThreads 线程数, defaults to 0
      * @param gpu_mem_limit 显存限制, only for cuda or tensorrt device, defaults to 2 GB
      */
-    Ort::Session get_model(string& model_path, string& device, int threads = 0, int gpu_mem_limit = 2) {
+    void get_model(string& model_path, string& device, int threads = 0, int gpu_mem_limit = 2) {
         // 获取可用的provider
         auto availableProviders = Ort::GetAvailableProviders();
         for (const auto& provider : availableProviders) {
@@ -90,8 +90,7 @@ public:
         wchar_t* model_path1 = new wchar_t[model_path.size()];
         swprintf(model_path1, 4096, L"%S", model_path.c_str());
         // create session
-        Ort::Session session = Ort::Session(this->env, model_path1, sessionOptions);
-        return session;
+        this->session = Ort::Session(this->env, model_path1, sessionOptions);
     }
 
     void get_onnx_info() {
