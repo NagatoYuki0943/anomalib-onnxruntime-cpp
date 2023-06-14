@@ -165,10 +165,7 @@ public:
         // 2.图片预处理
         cv::Mat resized_image;
         resized_image = pre_process(image, meta);
-        resized_image = cv::dnn::blobFromImage(resized_image, 1.0,
-                                               { this->meta.infer_size[1], this->meta.infer_size[0] },
-                                               { 0, 0, 0 },
-                                               false, false, CV_32F);
+        resized_image = cv::dnn::blobFromImage(resized_image);
 
         // 3.从图像创建tensor
         // 3.1 申请内存空间
