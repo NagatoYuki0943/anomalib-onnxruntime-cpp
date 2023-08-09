@@ -93,7 +93,7 @@ $onnxruntime_path\lib
 
 # Cmake
 
-> cmake版本要设置 `CMakeLists.txt` 中 opencv，onnxruntime 路径为自己的路径
+> 设置 `CMakeLists.txt` 中 opencv，onnxruntime 路径为自己的路径
 
 # 错误
 
@@ -101,7 +101,7 @@ $onnxruntime_path\lib
 
 如果程序无法运行，将`onnxruntime\lib`下的`*.dll`文件复制到exe目录下可以解决
 
-## 查看是否缺失dll
+# 查看是否缺失dll
 
 > https://github.com/lucasg/Dependencies 这个工具可以查看exe工具是否缺失dll
 
