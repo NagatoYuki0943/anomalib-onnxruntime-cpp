@@ -206,7 +206,7 @@ public:
         cout << "pred_score: " << pred_score << endl;   // 4.0252275
 
         // 6.后处理:标准化,缩放到原图
-        vector<cv::Mat> result = post_process(anomaly_map, pred_score, meta);
+        vector<cv::Mat> result = post_process(anomaly_map, pred_score, this->meta);
         anomaly_map = result[0];
         float score = result[1].at<float>(0, 0);
 

@@ -1,14 +1,14 @@
 # 说明
 
 > 适用于anomalib导出的onnx格式的模型
+>
+> 测试了 patchcore和fastflow模型
 
 ```yaml
 # 模型配置文件中设置为onnx,导出openvino会导出onnx
 optimization:
   export_mode: onnx # options: torch, onnx, openvino
 ```
-
-
 
 # onnxruntime官方例子
 
@@ -40,8 +40,6 @@ $opencv_path\build\x64\vc16\bin
 $onnxruntime_path\lib
 ```
 
-
-
 # 关于include文件夹
 
 > include文件夹是rapidjson的文件，用来解析json
@@ -49,8 +47,6 @@ $onnxruntime_path\lib
 # Cmake
 
 > cmake版本要设置 `CMakeLists.txt` 中 opencv，onnxruntime 路径为自己的路径
-
-
 
 # 错误
 
