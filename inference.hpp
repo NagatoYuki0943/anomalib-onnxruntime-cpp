@@ -13,6 +13,7 @@ using namespace std;
 
 class Inference {
 private:
+    bool efficient_ad;                                      // 是否使用efficient_ad模型
     MetaData meta{};                                        // 超参数
     Ort::Env env{};                                         // 三个ort参数
     Ort::AllocatorWithDefaultOptions allocator{};
@@ -34,8 +35,10 @@ public:
      * @param device        cpu or cuda or tensorrt 推理
      * @param threads       SetIntraOpNumThreads 线程数, defaults to 0
      * @param gpu_mem_limit 显存限制, only for cuda or tensorrt device, defaults to 2 GB
+     * @param efficient_ad  是否使用efficient_ad模型
      */
-    Inference(string& model_path, string& meta_path, string& device, int threads = 0, int gpu_mem_limit = 2) {
+    Inference(string& model_path, string& meta_path, string& device, int threads = 0, int gpu_mem_limit = 2, bool efficient_ad = false) {
+        this->efficient_ad = efficient_ad;
         // 1.读取meta
         this->meta = getJson(meta_path);
         // 2.创建模型
@@ -164,7 +167,7 @@ public:
 
         // 2.图片预处理
         cv::Mat resized_image;
-        resized_image = pre_process(image, meta);
+        resized_image = pre_process(image, meta, this->efficient_ad);
         resized_image = cv::dnn::blobFromImage(resized_image);
 
         // 3.从图像创建tensor
@@ -194,6 +197,7 @@ public:
                                       CV_32FC1, output0);
 
         // 5.针对不同输出数量获取得分
+        // efficient_ad模型有3个输出,不过只有第1个是anomaly_map,其余不用处理
         cv::Mat pred_score;
         if (this->output_nums == 2) {
             pred_score = cv::Mat(cv::Size(1, 1), CV_32FC1, output_tensors[1].GetTensorMutableData<float>());  // {1}
@@ -238,9 +242,12 @@ public:
         // 4.保存显示图片
         // 将mask转化为3通道,不然没法拼接图片
         cv::applyColorMap(images[0], images[0], cv::ColormapTypes::COLORMAP_JET);
-        saveScoreAndImages(result.score, images, image_path, save_dir);
+        // 拼接图片
+        cv::Mat res;
+        cv::hconcat(images, res);
+        saveScoreAndImages(result.score, res, image_path, save_dir);
 
-        return images[2];
+        return res;
     }
 
     /**
@@ -273,7 +280,10 @@ public:
             // 5.保存图片
             // 将mask转化为3通道,不然没法拼接图片
             cv::applyColorMap(images[0], images[0], cv::ColormapTypes::COLORMAP_JET);
-            saveScoreAndImages(result.score, images, image_path, save_dir);
+            // 拼接图片
+            cv::Mat res;
+            cv::hconcat(images, res);
+            saveScoreAndImages(result.score, res, image_path, save_dir);
         }
 
         // 6.统计数据
