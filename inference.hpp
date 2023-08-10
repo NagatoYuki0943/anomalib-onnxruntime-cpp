@@ -166,15 +166,14 @@ public:
         this->meta.image_size[1] = image.size[1];
 
         // 2.图片预处理
-        cv::Mat resized_image;
-        resized_image = pre_process(image, meta, this->efficient_ad);
-        resized_image = cv::dnn::blobFromImage(resized_image);
+        cv::Mat resized_image = pre_process(image, meta, this->efficient_ad);
+        cv::Mat blob = cv::dnn::blobFromImage(resized_image);
 
         // 3.从图像创建tensor
         // 3.1 申请内存空间
         auto memory_info = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);
         // 3.2 创建输入值
-        Ort::Value input_tensor = Ort::Value::CreateTensor<float>(memory_info, resized_image.ptr<float>(), resized_image.total(), input_dims[0].data(), input_dims[0].size());
+        Ort::Value input_tensor = Ort::Value::CreateTensor<float>(memory_info, blob.ptr<float>(), blob.total(), input_dims[0].data(), input_dims[0].size());
         // 3.3 推理 只传递输入
         vector<Ort::Value> output_tensors;
         try {

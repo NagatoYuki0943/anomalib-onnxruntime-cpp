@@ -50,12 +50,7 @@ int main() {
     inference.multi(image_dir, save_dir);
     return 0;
 }
-
 ```
-
-
-
-
 
 # onnxruntime官方例子
 
