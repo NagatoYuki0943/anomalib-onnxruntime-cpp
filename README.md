@@ -11,8 +11,8 @@ optimization:
 ```
 
 > common error `Non-zero status code`
->
-> [solution](##`Non-zero status code`)
+
+[solution](##`Non-zero status code`)
 
 # 其他推理方式
 
@@ -114,7 +114,7 @@ onnxruntime.capi.onnxruntime_pybind11_state.RuntimeException: [ONNXRuntimeError]
             embedding (np.ndarray): Embedding tensor from the CNN
             sampling_ratio (float): Coreset sampling ratio
         """
-        
+
         #------------------------------add this------------------------------#
         # The maximum allowed embedding length to prevent onnxruntime errors, you can try adjusting the embedding_max_len depending on the image resolution
         embedding_max_len = 15000
@@ -122,8 +122,8 @@ onnxruntime.capi.onnxruntime_pybind11_state.RuntimeException: [ONNXRuntimeError]
         if embedding_len * sampling_ratio > embedding_max_len:
             sampling_ratio = embedding_max_len / embedding_len
             print(f"embedding_max_len = {embedding_max_len}, use sampling_ratio = {sampling_ratio}, smaller than config")
-		#------------------------------add this------------------------------#
-        
+        #------------------------------add this------------------------------#
+
         # Coreset Subsampling
         sampler = KCenterGreedy(embedding=embedding, sampling_ratio=sampling_ratio)
         coreset = sampler.sample_coreset()
