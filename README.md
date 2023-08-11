@@ -10,6 +10,10 @@ optimization:
   export_mode: onnx # options: torch, onnx, openvino
 ```
 
+> common error `Non-zero status code`
+>
+> [solution](##`Non-zero status code`)
+
 # 其他推理方式
 
 > [anomalib-onnxruntime-cpp](https://github.com/NagatoYuki0943/anomalib-onnxruntime-cpp)
@@ -92,7 +96,43 @@ $onnxruntime_path\lib
 
 # 错误
 
-### 0xc000007b 0xC000007B
+## `Non-zero status code`
+
+> If an error similar to the following occurs during runtime
+
+```
+onnxruntime.capi.onnxruntime_pybind11_state.RuntimeException: [ONNXRuntimeError] : 6 : RUNTIME_EXCEPTION : Non-zero status code returned while running ArgMin node. Name:'/ArgMin' Status Message: D:\a\_work\1\s\onnxruntime\core\framework\bfc_arena.cc:368 onnxruntime::BFCArena::AllocateRawInternal Available memory of 0 is smaller than requested bytes of 701267968
+```
+
+> please add following code in `anomalib/src/anomalib/models/patchcore/torch_model.py` and train this model again
+
+```python
+    def subsample_embedding(self, embedding: Tensor, sampling_ratio: float) -> None:
+        """Subsample embedding based on coreset sampling and store to memory.
+
+        Args:
+            embedding (np.ndarray): Embedding tensor from the CNN
+            sampling_ratio (float): Coreset sampling ratio
+        """
+        
+        #------------------------------add this------------------------------#
+        # The maximum allowed embedding length to prevent onnxruntime errors, you can try adjusting the embedding_max_len depending on the image resolution
+        embedding_max_len = 15000
+        embedding_len     = int(embedding.size(0))
+        if embedding_len * sampling_ratio > embedding_max_len:
+            sampling_ratio = embedding_max_len / embedding_len
+            print(f"embedding_max_len = {embedding_max_len}, use sampling_ratio = {sampling_ratio}, smaller than config")
+		#------------------------------add this------------------------------#
+        
+        # Coreset Subsampling
+        sampler = KCenterGreedy(embedding=embedding, sampling_ratio=sampling_ratio)
+        coreset = sampler.sample_coreset()
+        self.memory_bank = coreset
+```
+
+
+
+## 0xc000007b 0xC000007B
 
 如果程序无法运行，将`onnxruntime\lib`下的`*.dll`文件复制到exe目录下可以解决
 
