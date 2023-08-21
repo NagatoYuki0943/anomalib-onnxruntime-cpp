@@ -166,7 +166,7 @@ public:
         this->meta.image_size[1] = image.size().width;
 
         // 2.图片预处理
-        cv::Mat resized_image = pre_process(image, meta, this->efficient_ad);
+        cv::Mat resized_image = pre_process(image, this->meta, this->efficient_ad);
         cv::Mat blob = cv::dnn::blobFromImage(resized_image);
 
         // 3.从图像创建tensor
