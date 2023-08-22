@@ -30,7 +30,7 @@ void PreProcess(const Mat& image, Mat& image_blob)
 
 
 	//数据处理 标准化
-	std::vector<Mat> channels, channel_p;
+	vector<Mat> channels, channel_p;
 	split(input, channels);
 	Mat R, G, B;
 	B = channels.at(0);
@@ -52,9 +52,9 @@ void PreProcess(const Mat& image, Mat& image_blob)
 
 
 // 读取txt文件
-std::vector<String> readClassNames()
+vector<String> readClassNames()
 {
-	std::vector<String> classNames;
+	vector<String> classNames;
 
 	std::ifstream fp(labels_txt_file);
 	if (!fp.is_open())
@@ -121,10 +121,10 @@ int main()         // 返回值为整型带参的main函数. 函数体内使用�
 	auto output_dims = session.GetOutputTypeInfo(0).GetTensorTypeAndShapeInfo().GetShape();
 	std::cout << "input_dims:" << input_dims[0] << std::endl;
 	std::cout << "output_dims:" << output_dims[0] << std::endl;
-	std::vector<const char*> input_names{ input_name };
-	std::vector<const char*> output_names = { output_name };
-	std::vector<const char*> input_node_names = { "input.1" };
-	std::vector<const char*> output_node_names = { "70"};
+	vector<const char*> input_names{ input_name };
+	vector<const char*> output_names = { output_name };
+	vector<const char*> input_node_names = { "input.1" };
+	vector<const char*> output_node_names = { "70"};
 
 
 	//加载图片
@@ -139,7 +139,7 @@ int main()         // 返回值为整型带参的main函数. 函数体内使用�
 	clock_t startTime, endTime;
 	//创建输入tensor
 	auto memory_info = Ort::MemoryInfo::CreateCpu(OrtAllocatorType::OrtArenaAllocator, OrtMemType::OrtMemTypeDefault);
-	std::vector<Ort::Value> input_tensors;
+	vector<Ort::Value> input_tensors;
 	input_tensors.emplace_back(Ort::Value::CreateTensor<float>(memory_info, blob.ptr<float>(), blob.total(), input_dims.data(), input_dims.size()));
 	/*cout << int(input_dims.size()) << endl;*/
 	startTime = clock();
