@@ -30,7 +30,7 @@ optimization:
 
 
 int main() {
-    // patchcore模型训练配置文件删除了center_crop
+    // patchcore模型训练配置文件调整center_crop为 `center_crop: null`
     string model_path = "D:/ml/code/anomalib/results/efficient_ad/mvtec/bottle/run/weights/openvino/model.onnx";
     string meta_path  = "D:/ml/code/anomalib/results/efficient_ad/mvtec/bottle/run/weights/openvino/metadata.json";
     string image_path = "D:/ml/code/anomalib/datasets/MVTec/bottle/test/broken_large/000.png";
@@ -121,7 +121,7 @@ onnxruntime.capi.onnxruntime_pybind11_state.RuntimeException: [ONNXRuntimeError]
         embedding_len     = int(embedding.size(0))
         if embedding_len * sampling_ratio > embedding_max_len:
             sampling_ratio = embedding_max_len / embedding_len
-            print(f"embedding_max_len = {embedding_max_len}, use sampling_ratio = {sampling_ratio}, smaller than config")
+            print(f"\033[0;31;40membedding_max_len = {embedding_max_len}, use sampling_ratio = {sampling_ratio}, smaller than config\033[0m")
         #------------------------------add this------------------------------#
 
         # Coreset Subsampling
