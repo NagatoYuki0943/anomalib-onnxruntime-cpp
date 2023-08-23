@@ -134,6 +134,8 @@ public:
             }
             cout << endl;
         }
+        // test dynamic batch, only support 1 input and 1 output
+        // this->input_dims[0] = { 1, 3, 256, 256 };
 
         for (int i = 0; i < this->output_nums; ++i) {
             cout << "output_dims: ";
@@ -142,6 +144,8 @@ public:
             }
             cout << endl;
         }
+        // test dynamic batch, only support 1 input and 1 output
+        // this->output_dims[0] = { 1, 1, 256, 256 };
     }
 
     /**
