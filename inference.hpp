@@ -127,28 +127,62 @@ public:
             this->output_dims.push_back(output_shape_info.GetShape());
         }
 
+        bool has_negative = false;
         for (int i = 0; i < this->input_nums; ++i) {
             cout << "input_dims: ";
-            for (const auto j : this->input_dims[i]) {
+            for (auto &j : this->input_dims[i]) {
+                if (j < 0) has_negative = true; // dynamic batch
                 cout << j << " ";
             }
             cout << endl;
         }
-        // test dynamic batch, only support 1 input and 1 output
-        // this->input_dims[0] = { 1, 3, 256, 256 };
 
         for (int i = 0; i < this->output_nums; ++i) {
             cout << "output_dims: ";
             for (const auto j : this->output_dims[i]) {
                 cout << j << " ";
+                if (j < 0) has_negative = true;
             }
             cout << endl;
         }
-        // test dynamic batch, only support 1 input and 1 output
-        // this->output_dims[0] = { 1, 1, 256, 256 }; // single output
-        // this->output_dims[1] = { 1 };              // patchcore add this line
-        // this->output_dims[1] = { 1, 1, 256, 256 }; // efficient_ad add 2 lines
-        // this->output_dims[2] = { 1, 1, 256, 256 }; // efficient_ad add 2 lines
+
+        // dynamic batch
+        if (has_negative) {
+            this->input_dims[0][0] = 1;
+
+            // single output
+            if (this->output_nums == 1) {
+                this->output_dims[0] = {1, 1, this->input_dims[0][2], this->input_dims[0][3]};
+            }
+            // patchcore
+            else if (this->output_nums == 2) {
+                this->output_dims[0] = { 1, 1, this->input_dims[0][2], this->input_dims[0][3] };
+                this->output_dims[1] = { 1 };
+            }
+            else if (this->output_nums == 3) {
+                this->output_dims[0] = { 1, 1, this->input_dims[0][2], this->input_dims[0][3] };
+                this->output_dims[1] = { 1, 1, this->input_dims[0][2], this->input_dims[0][3] };
+                this->output_dims[2] = { 1, 1, this->input_dims[0][2], this->input_dims[0][3] };
+            }
+
+            cout << "dynamic batch not support, new shape is" << endl;
+            for (int i = 0; i < this->input_nums; ++i) {
+                cout << "input_dims: ";
+                for (auto& j : this->input_dims[i]) {
+                    cout << j << " ";
+                }
+                cout << endl;
+            }
+
+            for (int i = 0; i < this->output_nums; ++i) {
+                cout << "output_dims: ";
+                for (const auto j : this->output_dims[i]) {
+                    cout << j << " ";
+                }
+                cout << endl;
+            }
+        }
+
     }
 
     /**
