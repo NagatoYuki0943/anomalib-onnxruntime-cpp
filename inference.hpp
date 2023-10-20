@@ -145,7 +145,10 @@ public:
             cout << endl;
         }
         // test dynamic batch, only support 1 input and 1 output
-        // this->output_dims[0] = { 1, 1, 256, 256 };
+        // this->output_dims[0] = { 1, 1, 256, 256 }; // single output
+        // this->output_dims[1] = { 1 };              // patchcore add this line
+        // this->output_dims[1] = { 1, 1, 256, 256 }; // efficient_ad add 2 lines
+        // this->output_dims[2] = { 1, 1, 256, 256 }; // efficient_ad add 2 lines
     }
 
     /**
