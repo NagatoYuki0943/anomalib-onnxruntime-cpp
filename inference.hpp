@@ -168,7 +168,7 @@ public:
                 this->output_dims[2] = { 1, 1, this->input_dims[0][2], this->input_dims[0][3] };
             }
 
-            cout << "dynamic batch not support, new shape is" << endl;
+            cout << "dynamic batch infer is unsupported, the shape has been fixed, new shape is" << endl;
             for (int i = 0; i < this->input_nums; ++i) {
                 cout << "input_dims: ";
                 for (auto& j : this->input_dims[i]) {
