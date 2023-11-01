@@ -70,6 +70,9 @@ public:
         sessionOptions.SetInterOpNumThreads(threads);
         // ORT_ENABLE_ALL: 启用所有可能的优化
         sessionOptions.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
+        // 可能解决内存泄漏的问题
+        sessionOptions.DisableCpuMemArena();    // https://onnxruntime.ai/docs/api/c/struct_ort_api.html#aa2ec3fc24741cfc1024ebb25091dde71
+        // sessionOptions.DisableMemPattern();
         if (device == "cuda" || device == "tensorrt") {
             // https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html
             // https://onnxruntime.ai/docs/api/c/struct_ort_c_u_d_a_provider_options.html
