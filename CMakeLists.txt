@@ -22,7 +22,7 @@ link_libraries(${OpenCV_LIBS})
 include_directories(${ONNXRuntime_DIR}/include)
 # onnxruntime lib
 link_directories(${ONNXRuntime_DIR}/lib)
-link_libraries(onnxruntime.lib onnxruntime_providers_cuda.lib onnxruntime_providers_shared.lib onnxruntime_providers_tensorrt.lib)
+link_libraries(onnxruntime.lib onnxruntime_providers_cuda.lib onnxruntime_providers_shared.lib)
 
 add_executable(main main.cpp utils.cpp opencv_utils.cpp inference.hpp)
 add_executable(test test.cpp)
